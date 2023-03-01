@@ -74,6 +74,22 @@ def get_marketcap(acciones):
 
     return market_cap
 
+def get_kpis(acciones):
+
+    kpis = {}
+    for i in acciones:
+        m = pd.read_excel('https://stockrow.com/api/companies/{}/financials.xlsx?dimension=Q&section=Metrics&sort=desc'.format(i))
+        m['kpis'] = m.iloc[:,0]
+        m.set_index('kpis',inplace=True)
+        m = m.loc[['Debt/Equity','Current Ratio','Net Profit Margin']]
+        m = m.T
+        m = m.iloc[1:,:]
+        m = m.apply(pd.to_numeric)
+        kpis['{}_kpis'.format(i)] = m
+
+
+    return kpis
+
 def get_pesos(data,acciones,ponderacion):
 
     if ponderacion == 'Capitalización':
@@ -111,6 +127,7 @@ def get_portafolio(data,pesos):
 data = get_data(acciones_select,start_date)
 pesos = get_pesos(data,acciones_select,ponderacion)
 portafolio = get_portafolio(data,pesos)
+kpis = get_kpis(acciones)
 
 
 ################################## Graficos portafolio ##################################
@@ -219,7 +236,7 @@ st.markdown('''
 # Gráfico de desempeño de cada accion
 ''')
 
-acciones_grafico = st.multiselect('Seleccione las acciones del portafolio',options=acciones,default=acciones)
+acciones_grafico = st.multiselect('Seleccione las acciones del portafolio',options=acciones_select,default=acciones_select)
 
 rent_cum_acciones = ((1+rent[start_date:]).cumprod()-1)
 
@@ -229,10 +246,40 @@ st.plotly_chart(fig4,theme='streamlit',use_container_width=True)
 
 
 ################################## KPIs Empresas #################################
+st.markdown('''
+---
+# KPIs por empresa
+''')
 
-#ROE
-#Margen Operativo
-#EPS
+accion = st.selectbox('Seleccione la accion a analizar',tuple(acciones_select))
+
+de , margen, current = st.tabs(['Debt/Equity','Margen Neto','Current ratio'])
+
+with de:
+
+    fig5 = px.bar(kpis['{}_kpis'.format(accion)]['Debt/Equity'][:10],text_auto=True)
+    fig5.update_layout(showlegend=False)
+    fig5.update_traces(textposition='outside')
+    fig5.update_xaxes(dtick='M1', tickformat='%b\n%Y')
+
+    st.plotly_chart(fig5,theme='streamlit',use_container_width=True)
+
+with margen:
+
+    fig6 = px.bar(kpis['{}_kpis'.format(accion)]['Net Profit Margin'][:10],text_auto=True)
+    fig6.update_layout(showlegend=False)
+    fig6.update_yaxes(tickformat=".2%")
+    fig6.update_xaxes(dtick='M1', tickformat='%b\n%Y')
+
+    st.plotly_chart(fig6,theme='streamlit',use_container_width=True)
+
+with current:
+
+    fig7 = px.bar(kpis['{}_kpis'.format(accion)]['Current Ratio'][:10],text_auto=True)
+    fig7.update_layout(showlegend=False)
+    fig7.update_xaxes(dtick='M1', tickformat='%b\n%Y')
+
+    st.plotly_chart(fig7,theme='streamlit',use_container_width=True)    
 
 
 ################################## Noticias #################################

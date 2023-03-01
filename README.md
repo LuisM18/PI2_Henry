@@ -27,7 +27,7 @@ Se intala desde la consola de forma recursiva con:
 En el notebook de jupyter `EDA.ipynb ` se necuentra el analisis de los rendimientos del indice S&P500, asi como el analisis por sector y la selección de acciones para invertir.
   
 ### **Dashboard en streamlit**
-En `main.py` corre el dashboard de simulación de portafolios, que se encuentra publicado en el siguiente [link]().
+En `main.py` corre el dashboard de simulación de portafolios, que se encuentra publicado en el siguiente [link](https://luism18-pi2-henry-main-ntq5ki.streamlit.app/).
 
 1. Una vez instaladas las librerias necesarias ejecuta el comando:
 '''bash
