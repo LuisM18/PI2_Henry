@@ -38,6 +38,12 @@ En `main.py` corre el dashboard de simulación de portafolios, que se encuentra 
 NOTA: Se recomienda el uso de un entorno virtual en python para ejecutar el proyecto. Mas información en la documentación de python, en el siguiente [link](https://docs.python.org/es/3/library/venv.html) 
 
 ---  
+## Stack Tecnologico
+* Pandas
+* Streamlit
+* Plotly
+* Matplotlib
+
 ## Fuentes de datos:
 
 - Libreria [yfinance](https://pypi.org/project/yfinance/) 
